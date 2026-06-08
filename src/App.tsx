@@ -8,7 +8,7 @@ import {
   type GeometryResult,
   type Warning,
 } from "./lib/calcs";
-import { as568Size } from "./data/as568";
+import { as568Size, maxDiametralClearanceIn } from "./data/as568";
 import {
   EMPTY_SPECIAL,
   isDynamicMotion,
@@ -44,6 +44,7 @@ interface FormState {
   grooveDepth: string;
   grooveWidth: string;
   installedDiameter: string;
+  diametralClearance: string;
 }
 
 const DEFAULT_FORM: FormState = {
@@ -65,6 +66,7 @@ const DEFAULT_FORM: FormState = {
   grooveDepth: "",
   grooveWidth: "",
   installedDiameter: "",
+  diametralClearance: "",
 };
 
 const MOTIONS: Motion[] = ["static", "reciprocating", "rotary", "pneumatic", "vacuum"];
@@ -190,7 +192,7 @@ function toCondition(f: FormState): SealConditions {
 function toGeometryResult(f: FormState): GeometryResult {
   // Squeeze/fill/stretch are dimensionless ratios, so the chosen length unit
   // cancels as long as every field uses the same unit (the panel enforces this).
-  return analyzeGeometry(
+  const result = analyzeGeometry(
     {
       insideDiameter: parseNum(f.insideDiameter),
       crossSection: parseNum(f.crossSection),
@@ -199,6 +201,59 @@ function toGeometryResult(f: FormState): GeometryResult {
       installedDiameter: parseNum(f.installedDiameter),
     },
     isDynamicMotion(f.motion),
+  );
+
+  // Diametral clearance vs SAE AS5857 max for this cross-section (absolute
+  // inches, so convert from the selected unit).
+  const cs = parseNum(f.crossSection);
+  const gap = parseNum(f.diametralClearance);
+  if (cs !== null && gap !== null && gap > 0) {
+    const toIn = (v: number) => (f.lenUnit === "inch" ? v : v / 25.4);
+    const maxIn = maxDiametralClearanceIn(toIn(cs));
+    if (maxIn !== null && toIn(gap) > maxIn) {
+      const maxDisp = f.lenUnit === "inch" ? `${maxIn}"` : `${(maxIn * 25.4).toFixed(2)} mm`;
+      result.warnings.push({
+        level: "severe",
+        text: `Diametral clearance exceeds the AS5857 max (~${maxDisp}) for this cross-section: extrusion risk, use back-up rings.`,
+      });
+    }
+  }
+  return result;
+}
+
+type MetricStatus = "none" | "ok" | "warn" | "severe";
+
+function squeezeStatus(v: number | null, dynamic: boolean): MetricStatus {
+  if (v === null) return "none";
+  if (dynamic) return v > 16 ? "severe" : v < 8 ? "warn" : "ok";
+  return v > 30 || v < 7 ? "warn" : "ok";
+}
+function fillStatus(v: number | null): MetricStatus {
+  if (v === null) return "none";
+  return v > 90 ? "severe" : v > 85 || v < 60 ? "warn" : "ok";
+}
+function stretchStatus(v: number | null): MetricStatus {
+  if (v === null) return "none";
+  return v > 5 || v < 0 ? "warn" : "ok";
+}
+
+function GeomMetric({
+  label,
+  value,
+  target,
+  status,
+}: {
+  label: string;
+  value: number | null;
+  target: string;
+  status: MetricStatus;
+}) {
+  return (
+    <div className={`metric metric-${status}`}>
+      <strong>{label}</strong>
+      <span>{value !== null ? `${value.toFixed(1)}%` : "—"}</span>
+      <small>{target}</small>
+    </div>
   );
 }
 
@@ -539,6 +594,15 @@ export default function App() {
             />
           </label>
 
+          <label className="field">
+            <span>Diametral clearance / gap (optional, {form.lenUnit})</span>
+            <input
+              type="number"
+              value={form.diametralClearance}
+              onChange={(e) => update({ diametralClearance: e.target.value })}
+            />
+          </label>
+
           {dynamicNote && (
             <p className="hint note">
               v1 gives warnings only; dynamic seal design needs detailed review.
@@ -546,18 +610,24 @@ export default function App() {
           )}
 
           <div className="geom-readout">
-            <div>
-              <strong>Squeeze</strong>
-              <span>{geometry.squeeze !== null ? `${geometry.squeeze.toFixed(1)}%` : "—"}</span>
-            </div>
-            <div>
-              <strong>Gland fill</strong>
-              <span>{geometry.glandFill !== null ? `${geometry.glandFill.toFixed(1)}%` : "—"}</span>
-            </div>
-            <div>
-              <strong>Stretch</strong>
-              <span>{geometry.stretch !== null ? `${geometry.stretch.toFixed(1)}%` : "—"}</span>
-            </div>
+            <GeomMetric
+              label="Squeeze"
+              value={geometry.squeeze}
+              target={isDynamicMotion(form.motion) ? "8–16%" : "7–30%"}
+              status={squeezeStatus(geometry.squeeze, isDynamicMotion(form.motion))}
+            />
+            <GeomMetric
+              label="Gland fill"
+              value={geometry.glandFill}
+              target="60–85%"
+              status={fillStatus(geometry.glandFill)}
+            />
+            <GeomMetric
+              label="Stretch"
+              value={geometry.stretch}
+              target="≤5%"
+              status={stretchStatus(geometry.stretch)}
+            />
           </div>
         </section>
 

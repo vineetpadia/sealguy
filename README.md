@@ -21,10 +21,15 @@ accounts, no runtime scraping.
   pressure fit, and special-needs fit.
 - Surfaces per-material warnings and a global **"Check before using"** red-flag
   panel that cannot be hidden.
-- Computes basic geometry checks when you enter dimensions:
+- Computes basic geometry checks when you enter dimensions, shown with their
+  OK target band and color-coded green/amber/red:
   - **Squeeze %** = `((crossSection - grooveDepth) / crossSection) * 100`
   - **Gland fill %** = `(π·(crossSection/2)² / (grooveWidth · grooveDepth)) * 100`
   - **Stretch %** = `((installedId - freeId) / freeId) * 100`
+- Optional **diametral clearance** check against the SAE AS5857 max for the
+  cross-section (Parker ORD-5700 Design Chart 4-1): flags extrusion / back-up
+  ring need. Also flags rapid gas (explosive) decompression for high-pressure
+  gas service.
 - Reports unknown data as **unknown** — it never upgrades a gap to a guess.
 
 ## What SealGuy does NOT do

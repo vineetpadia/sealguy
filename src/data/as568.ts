@@ -401,3 +401,31 @@ export function as568Size(input: string): As568Size | null {
 export function as568CrossSectionInch(input: string): number | null {
   return as568Size(input)?.csIn ?? null;
 }
+
+// Maximum recommended total diametral clearance (gap) by O-ring cross-section,
+// in inches, from the static gland design table (Parker ORD-5700 Design Chart
+// 4-1, SAE AS5857). Above this, extrusion risk rises and back-up rings are
+// advised. Keyed by the standard cross-section; uses the larger end of each
+// size group. Returns null if the cross-section is not a standard AS568 value.
+const MAX_CLEARANCE_BY_CS: { csIn: number; maxClearanceIn: number }[] = [
+  { csIn: 0.04, maxClearanceIn: 0.004 },
+  { csIn: 0.05, maxClearanceIn: 0.004 },
+  { csIn: 0.06, maxClearanceIn: 0.004 },
+  { csIn: 0.07, maxClearanceIn: 0.005 },
+  { csIn: 0.103, maxClearanceIn: 0.007 },
+  { csIn: 0.139, maxClearanceIn: 0.008 },
+  { csIn: 0.21, maxClearanceIn: 0.008 },
+  { csIn: 0.275, maxClearanceIn: 0.011 },
+];
+
+export function maxDiametralClearanceIn(crossSectionIn: number): number | null {
+  let best: { csIn: number; maxClearanceIn: number } | null = null;
+  for (const row of MAX_CLEARANCE_BY_CS) {
+    if (Math.abs(row.csIn - crossSectionIn) <= 0.012) {
+      if (!best || Math.abs(row.csIn - crossSectionIn) < Math.abs(best.csIn - crossSectionIn)) {
+        best = row;
+      }
+    }
+  }
+  return best ? best.maxClearanceIn : null;
+}

@@ -344,6 +344,19 @@ export function redFlags(cond: SealConditions, geom: GeometryResult): Warning[] 
     flags.push({ level: "warning", text: "Fluctuating/pulsing pressure: check extrusion and nibbling risk." });
   }
 
+  const gasService =
+    cond.fluidId === "air" ||
+    cond.fluidId === "vacuum" ||
+    cond.fluidId === "refrigerant" ||
+    cond.motion === "pneumatic" ||
+    cond.motion === "vacuum";
+  if (gasService && cond.pressurePsi !== null && cond.pressurePsi > 1500) {
+    flags.push({
+      level: "warning",
+      text: "High-pressure gas: check rapid gas (explosive) decompression; prefer high-hardness/RGD-rated compounds.",
+    });
+  }
+
   if (cond.motion === "reciprocating" || cond.motion === "rotary") {
     flags.push({
       level: "warning",

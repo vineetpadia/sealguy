@@ -80,6 +80,14 @@ describe("red flags", () => {
     expect(flags.some((w) => /geometry not checked/i.test(w.text))).toBe(true);
   });
 
+  it("flags rapid gas decompression for high-pressure gas service", () => {
+    const flags = redFlags(baseConditions({ fluidId: "air", pressurePsi: 2000 }), noGeom);
+    expect(flags.some((w) => /decompression/i.test(w.text))).toBe(true);
+    // not raised for a liquid at the same pressure
+    const liquid = redFlags(baseConditions({ fluidId: "water", pressurePsi: 2000 }), noGeom);
+    expect(liquid.some((w) => /decompression/i.test(w.text))).toBe(false);
+  });
+
   it("propagates a stretch warning from geometry into the red flags", () => {
     const geom = analyzeGeometry({ ...EMPTY_GEOMETRY, insideDiameter: 20, installedDiameter: 22 }, false);
     const flags = redFlags(baseConditions(), geom);

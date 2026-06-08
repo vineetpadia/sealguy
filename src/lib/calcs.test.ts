@@ -6,7 +6,12 @@ import {
   squeezePercent,
   stretchPercent,
 } from "./calcs";
-import { as568CrossSectionInch, as568Size, normalizeDash } from "../data/as568";
+import {
+  as568CrossSectionInch,
+  as568Size,
+  maxDiametralClearanceIn,
+  normalizeDash,
+} from "../data/as568";
 
 describe("geometry formulas", () => {
   it("computes squeeze percent", () => {
@@ -40,6 +45,12 @@ describe("geometry formulas", () => {
     expect(as568Size("2-001")?.csIn).toBeCloseTo(0.04, 5);
     // unknown dash
     expect(as568Size("999")).toBeNull();
+  });
+
+  it("returns the AS5857 max diametral clearance by cross-section", () => {
+    expect(maxDiametralClearanceIn(0.139)).toBeCloseTo(0.008, 5);
+    expect(maxDiametralClearanceIn(0.07)).toBeCloseTo(0.005, 5);
+    expect(maxDiametralClearanceIn(0.5)).toBeNull(); // non-standard cross-section
   });
 });
 
