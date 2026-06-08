@@ -1,11 +1,23 @@
-// Fluid <-> material-family compatibility seed data for SealGuy.
+// Fluid <-> material-family compatibility data for SealGuy.
 //
-// CONSERVATIVE, GENERAL guidance only. Ratings are coarse family-level starting
-// points, not compound-specific approvals. Any material not listed for a given
-// fluid is treated as "unknown" by the scorer (it is NOT assumed compatible).
+// The well-defined fluids (water, steam, mineral oil, petroleum hydraulic oil,
+// gasoline, diesel, ethanol-blend fuel, DOT 3/4 brake fluid, silicone oil) use
+// ratings derived from the Parker O-Ring Handbook ORD-5700 fluid compatibility
+// tables (Section VII, pages 162-216). Parker's legend is mapped to SealGuy as:
+//   1 satisfactory          -> good
+//   2 fair (usually static)  -> fair
+//   3 doubtful (static only) -> avoid  (treated conservatively)
+//   4 unsatisfactory         -> avoid
+//   X insufficient data      -> unknown
+// The original Parker page and numeric rating are kept in each note for
+// transparency. Broad categories (acids, bases, solvents, refrigerant) stay
+// conservative/general because results vary enormously by specific chemical;
+// look the exact chemical up in ORD-5700 and add a row.
 //
-// Do not add exact compound numbers, approvals, or part numbers here. When you
-// have a real datasheet, add the row and mark the material's sourceStatus.
+// Any material not listed for a fluid is treated as "unknown" by the scorer
+// (NOT assumed compatible). PTFE is not in Parker's elastomer columns, so its
+// ratings remain general "inert / special-case gland" notes. Do not add exact
+// compound numbers, approvals, or part numbers here.
 
 import type { Rating } from "./materials";
 
@@ -60,103 +72,105 @@ function compat(
 
 export const FLUIDS: FluidCompatibility[] = [
   compat("water", "Water", ["hot water", "potable water", "process water"], {
-    epdm: ["good", "Strong in water and hot water."],
-    hnbr: ["good", "Good in water and many aqueous fluids."],
-    nbr: ["fair", "Acceptable in cold water; watch hot water and additives."],
-    fkm: ["fair", "Standard grades can be attacked by hot water/steam; verify type."],
-    vmq: ["fair", "Generally tolerated in static water service."],
-    fvmq: ["fair", "Tolerated; verify for the specific aqueous mix."],
-    cr: ["fair", "Moderate water resistance."],
-    ffkm: ["good", "Strong in water and hot water."],
-    ptfe: ["good", "Chemically inert to water (special-case gland)."],
+    nbr: ["good", "Parker ORD-5700 p.215: rating 1 (satisfactory). Cold water; watch hot water."],
+    hnbr: ["fair", "Parker ORD-5700 p.215: rating 2 (fair; usually OK static)."],
+    epdm: ["good", "Parker ORD-5700 p.215: rating 1 (satisfactory)."],
+    fkm: ["fair", "Parker ORD-5700 p.215: rating 2 (fair). Hot water/steam attacks standard grades."],
+    ffkm: ["good", "Parker ORD-5700 p.215: rating 1 (satisfactory)."],
+    cr: ["fair", "Parker ORD-5700 p.215: rating 2 (fair; usually OK static)."],
+    fvmq: ["good", "Parker ORD-5700 p.215: rating 1 (satisfactory)."],
+    vmq: ["good", "Parker ORD-5700 p.215: rating 1 (satisfactory)."],
+    ptfe: ["good", "Inert to water (special-case gland; not in Parker elastomer table)."],
   }),
   compat("steam", "Steam", ["hot water/steam", "saturated steam"], {
-    epdm: ["good", "Classic steam elastomer (peroxide-cured grades)."],
-    ffkm: ["good", "Steam-resistant grades available; verify the grade."],
-    vmq: ["fair", "Limited; check temperature and exposure time."],
-    hnbr: ["fair", "Limited steam life; verify temperature."],
-    nbr: ["avoid", "Degrades in steam/hot water."],
-    fkm: ["avoid", "Standard grades attacked by steam; special grades only."],
-    fvmq: ["avoid", "Not recommended for steam."],
-    cr: ["avoid", "Not recommended for steam."],
-    ptfe: ["good", "Inert (special-case gland)."],
+    epdm: ["good", "Parker ORD-5700 p.209 (steam <400F): rating 1 (satisfactory)."],
+    ffkm: ["good", "Parker ORD-5700 p.209 (steam <400F): rating 1 (satisfactory)."],
+    vmq: ["avoid", "Parker ORD-5700 p.209 (steam <400F): rating 3 (doubtful; static only)."],
+    hnbr: ["avoid", "Parker ORD-5700 p.209 (steam <400F): rating 4 (unsatisfactory)."],
+    nbr: ["avoid", "Parker ORD-5700 p.209 (steam <400F): rating 4 (unsatisfactory)."],
+    fkm: ["avoid", "Parker ORD-5700 p.209 (steam <400F): rating 4 (unsatisfactory). Special grades only."],
+    fvmq: ["avoid", "Parker ORD-5700 p.209 (steam <400F): rating 4 (unsatisfactory)."],
+    cr: ["avoid", "Parker ORD-5700 p.209 (steam <400F): rating 4 (unsatisfactory)."],
+    ptfe: ["good", "Inert (special-case gland; not in Parker elastomer table)."],
   }),
   compat("mineral_oil", "Mineral oil", ["petroleum oil", "lubricating oil"], {
-    nbr: ["good", "Core NBR application."],
-    hnbr: ["good", "Excellent in petroleum oils."],
-    fkm: ["good", "Excellent oil resistance, especially hot."],
-    fvmq: ["good", "Resists oils while staying flexible cold."],
-    ffkm: ["good", "Compatible (usually overkill for plain oil)."],
-    cr: ["fair", "Moderate; aniline point dependent."],
-    vmq: ["fair", "Static only; can swell in some oils."],
-    ptfe: ["good", "Inert (special-case gland)."],
-    epdm: ["avoid", "Swells severely in petroleum oils."],
+    nbr: ["good", "Parker ORD-5700 p.196 (mineral oils): rating 1 (satisfactory)."],
+    hnbr: ["good", "Parker ORD-5700 p.196 (mineral oils): rating 1 (satisfactory)."],
+    fkm: ["good", "Parker ORD-5700 p.196 (mineral oils): rating 1 (satisfactory)."],
+    fvmq: ["good", "Parker ORD-5700 p.196 (mineral oils): rating 1 (satisfactory)."],
+    ffkm: ["good", "Parker ORD-5700 p.196 (mineral oils): rating 1 (satisfactory)."],
+    cr: ["fair", "Parker ORD-5700 p.196 (mineral oils): rating 2 (fair; usually OK static)."],
+    vmq: ["fair", "Parker ORD-5700 p.196 (mineral oils): rating 2 (fair; static only)."],
+    epdm: ["avoid", "Parker ORD-5700 p.196 (mineral oils): rating 3 (doubtful). EPDM swells in petroleum oils."],
+    ptfe: ["good", "Inert (special-case gland; not in Parker elastomer table)."],
   }),
   compat("hydraulic_oil", "Hydraulic oil (petroleum)", ["hydraulic fluid", "petroleum hydraulic"], {
-    nbr: ["good", "Standard for petroleum hydraulic oils."],
-    hnbr: ["good", "Tougher option for hotter hydraulics."],
-    fkm: ["good", "Good for high-temperature hydraulics."],
-    fvmq: ["good", "Compatible; limited mechanical strength."],
-    ffkm: ["good", "Compatible (usually overkill)."],
-    cr: ["fair", "Moderate resistance."],
-    vmq: ["fair", "Static only."],
-    ptfe: ["good", "Inert (special-case gland)."],
-    epdm: ["avoid", "Not for petroleum-based hydraulic oil. EPDM suits phosphate-ester fluids instead."],
+    nbr: ["good", "Parker ORD-5700 p.187 (hydraulic oil, petroleum base): rating 1 (satisfactory)."],
+    hnbr: ["good", "Parker ORD-5700 p.187 (hydraulic oil, petroleum base): rating 1 (satisfactory)."],
+    fkm: ["good", "Parker ORD-5700 p.187 (hydraulic oil, petroleum base): rating 1 (satisfactory)."],
+    fvmq: ["good", "Parker ORD-5700 p.187 (hydraulic oil, petroleum base): rating 1 (satisfactory)."],
+    ffkm: ["good", "Parker ORD-5700 p.187 (hydraulic oil, petroleum base): rating 1 (satisfactory)."],
+    cr: ["fair", "Parker ORD-5700 p.187 (hydraulic oil, petroleum base): rating 2 (fair; static)."],
+    vmq: ["fair", "Parker ORD-5700 p.187 (hydraulic oil, petroleum base): rating 2 (fair; static)."],
+    epdm: ["avoid", "Parker ORD-5700 p.187: rating 4 (unsatisfactory) for petroleum hydraulic oil. EPDM suits phosphate-ester fluids instead."],
+    ptfe: ["good", "Inert (special-case gland; not in Parker elastomer table)."],
   }),
   compat("gasoline", "Gasoline", ["petrol", "fuel"], {
-    fkm: ["good", "Strong fuel resistance, especially hot."],
-    fvmq: ["good", "Good fuel resistance with low-temperature flexibility."],
-    ffkm: ["good", "Compatible (usually overkill)."],
-    hnbr: ["fair", "Acceptable; FKM preferred for aggressive/hot fuel."],
-    nbr: ["fair", "OK for plain gasoline; aromatics reduce life."],
-    ptfe: ["good", "Inert (special-case gland)."],
-    epdm: ["avoid", "Swells in fuel."],
-    vmq: ["avoid", "Swells in fuel."],
-    cr: ["avoid", "Poor in gasoline."],
+    nbr: ["good", "Parker ORD-5700 p.185 (gasoline): rating 1 (satisfactory). Aromatics reduce life."],
+    hnbr: ["good", "Parker ORD-5700 p.185 (gasoline): rating 1 (satisfactory)."],
+    fkm: ["good", "Parker ORD-5700 p.185 (gasoline): rating 1 (satisfactory)."],
+    fvmq: ["good", "Parker ORD-5700 p.185 (gasoline): rating 1 (satisfactory)."],
+    ffkm: ["good", "Parker ORD-5700 p.185 (gasoline): rating 1 (satisfactory)."],
+    epdm: ["avoid", "Parker ORD-5700 p.185 (gasoline): rating 4 (unsatisfactory). Swells in fuel."],
+    cr: ["avoid", "Parker ORD-5700 p.185 (gasoline): rating 4 (unsatisfactory)."],
+    vmq: ["avoid", "Parker ORD-5700 p.185 (gasoline): rating 4 (unsatisfactory). Swells in fuel."],
+    ptfe: ["good", "Inert (special-case gland; not in Parker elastomer table)."],
   }),
   compat("diesel", "Diesel", ["diesel fuel", "gas oil"], {
-    fkm: ["good", "Strong diesel resistance."],
-    hnbr: ["good", "Good diesel resistance."],
-    fvmq: ["good", "Good with cold flexibility."],
-    ffkm: ["good", "Compatible (usually overkill)."],
-    nbr: ["fair", "OK for diesel; biodiesel content reduces life."],
-    ptfe: ["good", "Inert (special-case gland)."],
-    epdm: ["avoid", "Swells in fuel."],
-    vmq: ["avoid", "Swells in fuel."],
-    cr: ["avoid", "Poor in diesel."],
+    nbr: ["good", "Parker ORD-5700 p.179 (diesel oil): rating 1 (satisfactory). Biodiesel reduces life."],
+    hnbr: ["good", "Parker ORD-5700 p.179 (diesel oil): rating 1 (satisfactory)."],
+    fkm: ["good", "Parker ORD-5700 p.179 (diesel oil): rating 1 (satisfactory)."],
+    fvmq: ["good", "Parker ORD-5700 p.179 (diesel oil): rating 1 (satisfactory)."],
+    ffkm: ["good", "Parker ORD-5700 p.179 (diesel oil): rating 1 (satisfactory)."],
+    cr: ["avoid", "Parker ORD-5700 p.179 (diesel oil): rating 3 (doubtful; static only)."],
+    epdm: ["avoid", "Parker ORD-5700 p.179 (diesel oil): rating 4 (unsatisfactory). Swells in fuel."],
+    vmq: ["avoid", "Parker ORD-5700 p.179 (diesel oil): rating 4 (unsatisfactory). Swells in fuel."],
+    ptfe: ["good", "Inert (special-case gland; not in Parker elastomer table)."],
   }),
   compat("ethanol_fuel", "Ethanol blend fuel", ["e10", "e85", "gasohol", "flex fuel"], {
-    ffkm: ["good", "Broadly resistant; verify grade."],
-    fkm: ["fair", "Ethanol attacks some FKM types; use an ethanol-rated grade (e.g. GFLT/type F)."],
-    fvmq: ["fair", "Variable with ethanol content; verify."],
-    hnbr: ["fair", "Acceptable for moderate blends."],
-    nbr: ["fair", "Lower blends only; ethanol shortens life."],
-    ptfe: ["good", "Inert (special-case gland)."],
-    epdm: ["avoid", "Swells in the hydrocarbon fraction."],
-    vmq: ["avoid", "Swells in fuel."],
-    cr: ["avoid", "Poor in fuel."],
+    // No "gasohol" row in Parker; derived conservatively as the worse of the
+    // "Gasoline" (p.185) and "Ethanol" (p.181) ratings for each family.
+    ffkm: ["good", "Parker ORD-5700: rating 1 in both gasoline (p.185) and ethanol (p.181)."],
+    fvmq: ["good", "Parker ORD-5700: rating 1 in both gasoline (p.185) and ethanol (p.181)."],
+    nbr: ["avoid", "Parker ORD-5700: ethanol (p.181) rating 3 (doubtful). Ethanol shortens NBR life."],
+    hnbr: ["avoid", "Parker ORD-5700: ethanol (p.181) rating 3 (doubtful)."],
+    fkm: ["avoid", "Parker ORD-5700: ethanol (p.181) rating 3 (doubtful). Use an ethanol-rated FKM (GFLT/type)."],
+    epdm: ["avoid", "Parker ORD-5700: gasoline (p.185) rating 4. Swells in the hydrocarbon fraction."],
+    cr: ["avoid", "Parker ORD-5700: gasoline (p.185) rating 4 (unsatisfactory)."],
+    vmq: ["avoid", "Parker ORD-5700: gasoline (p.185) rating 4 (unsatisfactory)."],
+    ptfe: ["good", "Inert (special-case gland; not in Parker elastomer table)."],
   }),
   compat("dot_brake", "DOT 3/4 brake fluid", ["glycol brake fluid", "dot3", "dot4"], {
-    epdm: ["good", "Standard elastomer for glycol brake fluid."],
-    ffkm: ["fair", "Compatible but rarely justified here."],
-    vmq: ["fair", "Tolerated in some static uses; verify."],
-    ptfe: ["good", "Inert (special-case gland)."],
-    nbr: ["avoid", "Not for glycol brake fluid."],
-    hnbr: ["avoid", "Not for glycol brake fluid."],
-    fkm: ["avoid", "Attacked by glycol brake fluid."],
-    fvmq: ["avoid", "Not recommended."],
-    cr: ["avoid", "Not recommended."],
+    epdm: ["good", "Parker ORD-5700 p.169 (DOT 3 glycol): rating 1 (satisfactory)."],
+    ffkm: ["good", "Parker ORD-5700 p.169 (DOT 3 glycol): rating 1 (satisfactory)."],
+    cr: ["fair", "Parker ORD-5700 p.169 (DOT 3 glycol): rating 2 (fair; usually OK static)."],
+    nbr: ["avoid", "Parker ORD-5700 p.169 (DOT 3 glycol): rating 3 (doubtful). Not for glycol brake fluid."],
+    hnbr: ["avoid", "Parker ORD-5700 p.169 (DOT 3 glycol): rating 3 (doubtful)."],
+    vmq: ["avoid", "Parker ORD-5700 p.169 (DOT 3 glycol): rating 3 (doubtful; static only)."],
+    fkm: ["avoid", "Parker ORD-5700 p.169 (DOT 3 glycol): rating 4 (unsatisfactory). Attacked by glycol brake fluid."],
+    fvmq: ["avoid", "Parker ORD-5700 p.169 (DOT 3 glycol): rating 4 (unsatisfactory)."],
+    ptfe: ["good", "Inert (special-case gland; not in Parker elastomer table)."],
   }),
   compat("silicone_oil", "Silicone oil", ["silicone fluid", "pdms"], {
-    fkm: ["good", "Compatible with silicone fluids."],
-    nbr: ["good", "Generally compatible."],
-    hnbr: ["good", "Generally compatible."],
-    ffkm: ["good", "Compatible."],
-    epdm: ["fair", "Usually tolerated; verify additives."],
-    cr: ["fair", "Usually tolerated."],
-    ptfe: ["good", "Inert (special-case gland)."],
-    vmq: ["avoid", "Silicone seal swells in silicone fluid."],
-    fvmq: ["avoid", "Avoid (silicone-based) in silicone fluid."],
+    nbr: ["good", "Parker ORD-5700 p.206 (silicone oils): rating 1 (satisfactory)."],
+    hnbr: ["good", "Parker ORD-5700 p.206 (silicone oils): rating 1 (satisfactory)."],
+    epdm: ["good", "Parker ORD-5700 p.206 (silicone oils): rating 1 (satisfactory)."],
+    fkm: ["good", "Parker ORD-5700 p.206 (silicone oils): rating 1 (satisfactory)."],
+    ffkm: ["good", "Parker ORD-5700 p.206 (silicone oils): rating 1 (satisfactory)."],
+    cr: ["good", "Parker ORD-5700 p.206 (silicone oils): rating 1 (satisfactory)."],
+    vmq: ["avoid", "Parker ORD-5700 p.206 (silicone oils): rating 3 (doubtful). Silicone seal swells in silicone fluid."],
+    fvmq: ["avoid", "Parker ORD-5700 p.206 (silicone oils): rating 3 (doubtful)."],
+    ptfe: ["good", "Inert (special-case gland; not in Parker elastomer table)."],
   }),
   compat("air", "Air", ["compressed air", "pneumatic"], {
     nbr: ["good", "Common pneumatic material; mind compressor oil carryover."],

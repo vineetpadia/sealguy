@@ -1,10 +1,14 @@
 // Material family data for SealGuy.
 //
-// All values are CONSERVATIVE, GENERAL seed data ("seeded-general"). They are a
-// starting point for choosing an elastomer family, not a substitute for a
-// manufacturer datasheet or compound-specific testing. Temperature ranges are
-// typical continuous-service ballparks for general-purpose compounds; specific
-// compounds vary widely.
+// Temperature ranges (tempMinC/tempMaxC) are the common-service ranges from the
+// Parker O-Ring Handbook ORD-5700 (page 162 summary table; PTFE from the back-up
+// ring guidance, page 152). Those quantitative values are "source-backed".
+//
+// The qualitative ratings (dynamicSuitability, abrasionResistance,
+// ozoneResistance, vacuumSuitability) and the strengths/weaknesses/notes prose
+// remain CONSERVATIVE, GENERAL family-level guidance. They are a starting point,
+// not a substitute for a compound-specific datasheet or testing. Specific
+// compounds within a family vary widely.
 
 export type Rating = "good" | "fair" | "avoid" | "unknown";
 
@@ -32,8 +36,8 @@ export const MATERIALS: MaterialFamily[] = [
     id: "nbr",
     name: "NBR / Buna-N",
     aliases: ["nitrile", "buna", "buna-n", "nbr"],
-    tempMinC: -35,
-    tempMaxC: 120,
+    tempMinC: -34,
+    tempMaxC: 121,
     costTier: 1,
     dynamicSuitability: "good",
     abrasionResistance: "good",
@@ -53,14 +57,14 @@ export const MATERIALS: MaterialFamily[] = [
       "Default low-cost choice for petroleum oil/fuel service indoors.",
       "Low-temperature and high-temperature grades exist; verify the specific compound.",
     ],
-    sourceStatus: "seeded-general",
+    sourceStatus: "source-backed",
   },
   {
     id: "epdm",
     name: "EPDM",
     aliases: ["epdm", "ethylene propylene", "epr"],
-    tempMinC: -45,
-    tempMaxC: 150,
+    tempMinC: -57,
+    tempMaxC: 121,
     costTier: 1,
     dynamicSuitability: "fair",
     abrasionResistance: "fair",
@@ -79,14 +83,14 @@ export const MATERIALS: MaterialFamily[] = [
       "Excellent for water/steam/weather but must be kept away from petroleum oils.",
       "Peroxide-cured grades give better heat/steam performance.",
     ],
-    sourceStatus: "seeded-general",
+    sourceStatus: "source-backed",
   },
   {
     id: "fkm",
     name: "FKM / fluoroelastomer",
     aliases: ["fkm", "viton", "fluoroelastomer", "fpm"],
-    tempMinC: -20,
-    tempMaxC: 200,
+    tempMinC: -26,
+    tempMaxC: 205,
     costTier: 3,
     dynamicSuitability: "good",
     abrasionResistance: "good",
@@ -106,14 +110,14 @@ export const MATERIALS: MaterialFamily[] = [
       "Broad chemical and heat workhorse above NBR's range.",
       "Low-temperature and specialty fuel grades exist; verify the type (A/B/F/GLT).",
     ],
-    sourceStatus: "seeded-general",
+    sourceStatus: "source-backed",
   },
   {
     id: "hnbr",
     name: "HNBR",
     aliases: ["hnbr", "hydrogenated nitrile", "hsn"],
-    tempMinC: -30,
-    tempMaxC: 150,
+    tempMinC: -32,
+    tempMaxC: 149,
     costTier: 3,
     dynamicSuitability: "good",
     abrasionResistance: "good",
@@ -132,14 +136,14 @@ export const MATERIALS: MaterialFamily[] = [
       "Step up from NBR for hotter or more demanding oil/fuel service.",
       "Common in A/C and automotive applications.",
     ],
-    sourceStatus: "seeded-general",
+    sourceStatus: "source-backed",
   },
   {
     id: "vmq",
     name: "Silicone / VMQ",
     aliases: ["silicone", "vmq", "mvq", "si"],
-    tempMinC: -60,
-    tempMaxC: 200,
+    tempMinC: -115,
+    tempMaxC: 232,
     costTier: 2,
     dynamicSuitability: "avoid",
     abrasionResistance: "avoid",
@@ -159,14 +163,14 @@ export const MATERIALS: MaterialFamily[] = [
       "Best for static, low-stress seals across a wide temperature band.",
       "Not for dynamic/abrasive service or fuel exposure.",
     ],
-    sourceStatus: "seeded-general",
+    sourceStatus: "source-backed",
   },
   {
     id: "fvmq",
     name: "Fluorosilicone / FVMQ",
     aliases: ["fluorosilicone", "fvmq", "fsi"],
-    tempMinC: -60,
-    tempMaxC: 175,
+    tempMinC: -73,
+    tempMaxC: 177,
     costTier: 4,
     dynamicSuitability: "avoid",
     abrasionResistance: "avoid",
@@ -185,14 +189,14 @@ export const MATERIALS: MaterialFamily[] = [
       "Niche choice when both low temperature and fuel resistance are required.",
       "Typically static service only.",
     ],
-    sourceStatus: "seeded-general",
+    sourceStatus: "source-backed",
   },
   {
     id: "ffkm",
     name: "FFKM",
     aliases: ["ffkm", "perfluoroelastomer", "kalrez", "chemraz"],
-    tempMinC: -15,
-    tempMaxC: 260,
+    tempMinC: -26,
+    tempMaxC: 320,
     costTier: 5,
     dynamicSuitability: "fair",
     abrasionResistance: "fair",
@@ -211,14 +215,14 @@ export const MATERIALS: MaterialFamily[] = [
       "Use only when justified by chemistry/temperature that defeats cheaper families.",
       "Grade selection is application-specific; always verify with the supplier.",
     ],
-    sourceStatus: "seeded-general",
+    sourceStatus: "source-backed",
   },
   {
     id: "cr",
     name: "Neoprene / CR",
     aliases: ["neoprene", "cr", "chloroprene"],
-    tempMinC: -40,
-    tempMaxC: 100,
+    tempMinC: -51,
+    tempMaxC: 107,
     costTier: 2,
     dynamicSuitability: "fair",
     abrasionResistance: "good",
@@ -238,14 +242,14 @@ export const MATERIALS: MaterialFamily[] = [
       "Traditional choice for refrigeration and weather-exposed seals.",
       "Refrigerant compatibility depends strongly on the specific refrigerant.",
     ],
-    sourceStatus: "seeded-general",
+    sourceStatus: "source-backed",
   },
   {
     id: "ptfe",
     name: "PTFE (special case)",
     aliases: ["ptfe", "teflon", "tfe"],
-    tempMinC: -50,
-    tempMaxC: 200,
+    tempMinC: -73,
+    tempMaxC: 204,
     costTier: 3,
     dynamicSuitability: "fair",
     abrasionResistance: "fair",
@@ -265,7 +269,7 @@ export const MATERIALS: MaterialFamily[] = [
       "Listed as a special case: standard O-ring gland rules do not apply.",
       "Often used as a spring-energized seal or with an elastomer energizer.",
     ],
-    sourceStatus: "seeded-general",
+    sourceStatus: "source-backed",
   },
 ];
 

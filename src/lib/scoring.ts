@@ -268,9 +268,13 @@ export function scoreMaterial(m: MaterialFamily, cond: SealConditions): Material
 
   const dataGaps: string[] = [];
   if (fluid.rating === "unknown") {
-    dataGaps.push("No seeded fluid compatibility for this pair; do not infer.");
+    dataGaps.push("No fluid compatibility data for this pair; do not infer.");
   }
-  if (m.sourceStatus !== "source-backed") {
+  if (m.sourceStatus === "source-backed") {
+    dataGaps.push(
+      "Temperature range is from Parker ORD-5700; qualitative motion/abrasion/ozone ratings remain general guidance. Verify the specific compound datasheet.",
+    );
+  } else {
     dataGaps.push("Material data is seeded/general, not source-backed; verify against datasheets.");
   }
 

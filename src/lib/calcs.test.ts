@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 import {
   analyzeGeometry,
-  as568CrossSectionInch,
   cFromF,
   glandFillPercent,
   squeezePercent,
   stretchPercent,
 } from "./calcs";
+import { as568CrossSectionInch, as568Size, normalizeDash } from "../data/as568";
 
 describe("geometry formulas", () => {
   it("computes squeeze percent", () => {
@@ -29,11 +29,17 @@ describe("geometry formulas", () => {
     expect(cFromF(212)).toBeCloseTo(100, 5);
   });
 
-  it("looks up AS568 cross-sections by series", () => {
+  it("looks up real AS568 sizes from the Parker tables", () => {
+    // -214: ID 0.984", CS 0.139"
+    expect(as568Size("214")?.idIn).toBeCloseTo(0.984, 5);
     expect(as568CrossSectionInch("214")).toBeCloseTo(0.139, 5);
-    expect(as568CrossSectionInch("2-214")).toBeCloseTo(0.139, 5);
-    expect(as568CrossSectionInch("110")).toBeCloseTo(0.103, 5);
-    expect(as568CrossSectionInch("999")).toBeNull();
+    // accepts AS568-/2-/-/bare forms
+    expect(normalizeDash("AS568-214")).toBe("214");
+    expect(normalizeDash("2-214")).toBe("214");
+    expect(normalizeDash("-001")).toBe("001");
+    expect(as568Size("2-001")?.csIn).toBeCloseTo(0.04, 5);
+    // unknown dash
+    expect(as568Size("999")).toBeNull();
   });
 });
 

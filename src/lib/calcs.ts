@@ -57,22 +57,8 @@ export function stretchPercent(freeId: number, installedId: number): number {
   return ((installedId - freeId) / freeId) * 100;
 }
 
-// ----- AS568 cross-section lookup -----
-//
-// AS568 standardizes the nominal cross-section by dash-number series. We only
-// fill in the cross-section (which we are confident about) and leave the inside
-// diameter for the user, so no inside-diameter numbers are invented.
-export function as568CrossSectionInch(dash: string): number | null {
-  const cleaned = dash.trim().toLowerCase().replace(/^as568[a-z]?/, "").replace(/^2?-/, "").trim();
-  const n = parseInt(cleaned, 10);
-  if (!Number.isFinite(n)) return null;
-  if (n >= 6 && n <= 50) return 0.07;
-  if (n >= 102 && n <= 178) return 0.103;
-  if (n >= 201 && n <= 284) return 0.139;
-  if (n >= 309 && n <= 395) return 0.21;
-  if (n >= 425 && n <= 475) return 0.275;
-  return null;
-}
+// AS568 size lookup now lives in src/data/as568.ts (real values extracted from
+// the Parker O-Ring Handbook ORD-5700), exposing as568Size / as568CrossSectionInch.
 
 // ----- geometry analysis -----
 

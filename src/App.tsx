@@ -3,12 +3,12 @@ import { COST_LABELS } from "./data/materials";
 import { FLUID_OPTIONS, FLUID_BY_ID } from "./data/compatibility";
 import {
   analyzeGeometry,
-  as568CrossSectionInch,
   cFromF,
   psiFromBar,
   type GeometryResult,
   type Warning,
 } from "./lib/calcs";
+import { as568Size } from "./data/as568";
 import {
   EMPTY_SPECIAL,
   isDynamicMotion,
@@ -282,14 +282,17 @@ export default function App() {
     );
   }, [form.fluidQuery]);
 
-  const applyAs568 = () => {
-    const cs = as568CrossSectionInch(form.dash);
-    if (cs === null) return;
-    const value = form.lenUnit === "inch" ? cs : Number((cs * 25.4).toFixed(3));
-    update({ crossSection: String(value) });
-  };
+  const as568Match = as568Size(form.dash);
 
-  const as568Preview = as568CrossSectionInch(form.dash);
+  const applyAs568 = () => {
+    if (!as568Match) return;
+    const conv = (inches: number) =>
+      String(form.lenUnit === "inch" ? inches : Number((inches * 25.4).toFixed(3)));
+    update({
+      insideDiameter: conv(as568Match.idIn),
+      crossSection: conv(as568Match.csIn),
+    });
+  };
 
   const handleCopy = async () => {
     const text = buildSummary(form, results, flags, geometry);
@@ -476,17 +479,17 @@ export default function App() {
               <button
                 type="button"
                 className="apply-btn"
-                disabled={as568Preview === null}
+                disabled={!as568Match}
                 onClick={applyAs568}
               >
-                Apply CS
+                Apply size
               </button>
             </div>
             {form.dash.trim() !== "" && (
               <small className="hint">
-                {as568Preview !== null
-                  ? `AS568 cross-section ${as568Preview}" (${(as568Preview * 25.4).toFixed(2)} mm). Enter the inside diameter yourself.`
-                  : "Dash number not in the seeded AS568 cross-section table; enter dimensions manually."}
+                {as568Match
+                  ? `AS568-${as568Match.dash}: ID ${as568Match.idIn}" (${(as568Match.idIn * 25.4).toFixed(2)} mm), CS ${as568Match.csIn}" (${(as568Match.csIn * 25.4).toFixed(2)} mm). Source: Parker ORD-5700.`
+                  : "Dash number not found in the AS568 table; enter dimensions manually."}
               </small>
             )}
           </label>

@@ -68,8 +68,30 @@ Two seed-data files and two pure-logic files drive everything:
 | --- | --- |
 | `src/data/materials.ts` | `MaterialFamily` records: temp range, cost tier, dynamic/abrasion/ozone/vacuum ratings, strengths, weaknesses, notes, `sourceStatus`. |
 | `src/data/compatibility.ts` | `FluidCompatibility` records: per-fluid `rating` + `note` for each material. Missing pairs are treated as `unknown`. |
+| `src/data/as568.ts` | AS568 dash → inside-diameter + cross-section table (auto-generated from the Parker handbook), plus the dash-number lookup/normalizer. |
 | `src/lib/scoring.ts` | Deterministic scoring, ranking, and the global red-flag list. |
-| `src/lib/calcs.ts` | Unit conversions, squeeze/fill/stretch formulas, AS568 cross-section lookup, geometry warnings. |
+| `src/lib/calcs.ts` | Unit conversions, squeeze/fill/stretch formulas, geometry warnings. |
+
+### Data provenance
+
+Quantitative data is sourced from the **Parker O-Ring Handbook (ORD 5700)**:
+
+- **Temperature ranges** in `materials.ts` are Parker's common-service ranges
+  (handbook p.162; PTFE from the back-up-ring guidance), so those families are
+  marked `source-backed`. Their *qualitative* ratings (dynamic/abrasion/ozone/
+  vacuum) and prose remain general guidance.
+- **Fluid ratings** in `compatibility.ts` for the well-defined fluids (water,
+  steam, mineral/hydraulic oil, gasoline, diesel, ethanol-blend fuel, DOT 3/4,
+  silicone oil) are derived from Parker's Section VII tables, mapping Parker's
+  `1/2/3/4/X` legend to SealGuy's `good/fair/avoid/unknown` (rating `3 doubtful`
+  is treated conservatively as `avoid`). The original page and numeric rating are
+  cited in each note. Broad categories (acids, bases, solvents, refrigerant)
+  stay conservative/general — look the exact chemical up in the handbook.
+- AS568 sizes in `as568.ts` come from handbook Tables 9-1/9-2.
+
+> The Parker handbook PDF and its OCR text are **copyrighted** and are **not** in
+> this repository (they are git-ignored). Notes cite the handbook rather than
+> reproducing its tables verbatim.
 
 ```ts
 type Rating = "good" | "fair" | "avoid" | "unknown";

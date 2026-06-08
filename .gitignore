@@ -4,6 +4,12 @@ dist-ssr
 *.local
 .vite
 
+# Source/reference documents (copyrighted; keep out of the public repo)
+*.pdf
+ocr/
+*.ocr.md
+*.ocr.json
+
 # Editor / OS
 .vscode/*
 !.vscode/extensions.json
